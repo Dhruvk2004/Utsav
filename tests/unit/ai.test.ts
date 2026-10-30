@@ -137,24 +137,30 @@ describe("generatePlan", () => {
 });
 
 describe("jsonSchemaOf", () => {
-  it("sends Gemini only the keywords it accepts, keeping length limits as hints (real Gemini 400 regression)", () => {
+  it("sends Gemini only the keywords it accepts, keeping limits as hints (real Gemini 400 regression)", () => {
     const schema = z.object({
       default: z.string().min(1).max(40),
       note: z.string().max(200).default(""),
       kind: z.literal("a"),
       count: z.number().int().min(1).max(5),
+      total: z.number().int().min(0),
+      tags: z.array(z.string()).min(1).max(3),
     });
     const json = jsonSchemaOf(schema) as { properties: Record<string, Record<string, unknown>> };
     expect(json).not.toHaveProperty("$schema");
-    expect(JSON.stringify(json)).not.toMatch(/"(minLength|maxLength|const|\$schema)"/);
+    expect(JSON.stringify(json)).not.toMatch(/"(minLength|maxLength|minimum|maximum|minItems|maxItems|const|\$schema)"/);
     expect(json.properties.default).toEqual({ type: "string", description: "At most 40 characters." });
     expect(json.properties.note).toEqual({ type: "string", description: "At most 200 characters." });
     expect(json.properties.kind).toMatchObject({ enum: ["a"] });
-    expect(json.properties.count).toMatchObject({ type: "integer", minimum: 1, maximum: 5 });
+    expect(json.properties.count).toEqual({ type: "integer", description: "Minimum 1. Maximum 5." });
+    expect(json.properties.total).toEqual({ type: "integer", description: "Minimum 0." });
+    expect(json.properties.tags).toMatchObject({ type: "array", description: "At least 1 item. At most 3 items." });
   });
 
-  it("leaves the plan schema free of unsupported keywords", () => {
-    expect(JSON.stringify(draftJsonSchema())).not.toMatch(/"(minLength|maxLength|pattern|const|\$schema)"/);
+  it("leaves the plan schema free of the keywords Gemini rejected", () => {
+    expect(JSON.stringify(draftJsonSchema())).not.toMatch(
+      /"(minLength|maxLength|minimum|maximum|minItems|maxItems|pattern|const|\$schema)"/,
+    );
   });
 });
 

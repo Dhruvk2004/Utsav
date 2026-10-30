@@ -57,10 +57,6 @@ const GEMINI_SCHEMA_KEYWORDS = new Set([
   "description",
   "enum",
   "items",
-  "minItems",
-  "maxItems",
-  "minimum",
-  "maximum",
   "anyOf",
   "required",
   "properties",
@@ -79,11 +75,22 @@ function forGemini(node: unknown): unknown {
     kept[key] = key === "properties" ? mapValues(value as Record<string, unknown>, forGemini) : forGemini(value);
   }
   if (source.const !== undefined) kept.enum = [source.const];
-  // Say the length limit in words, so the model still aims inside what Zod will accept.
-  if (typeof source.maxLength === "number") {
-    kept.description = [kept.description, `At most ${source.maxLength} characters.`].filter(Boolean).join(" ");
-  }
+  // Say the limits in words, so the model still aims inside what Zod will accept.
+  const hints = limitHints(source);
+  if (hints.length > 0) kept.description = [kept.description, ...hints].filter(Boolean).join(" ");
   return kept;
+}
+
+/** Written forms of the limits Gemini rejects in a schema (HTTP 400 on minimum, maximum, minItems and maxItems). */
+function limitHints({ maxLength, minimum, maximum, minItems, maxItems }: Record<string, unknown>): string[] {
+  const hints: string[] = [];
+  if (typeof maxLength === "number") hints.push(`At most ${maxLength} characters.`);
+  if (typeof minimum === "number") hints.push(`Minimum ${minimum}.`);
+  // Zod bounds every integer by Number.MAX_SAFE_INTEGER, which is no real limit.
+  if (typeof maximum === "number" && maximum < Number.MAX_SAFE_INTEGER) hints.push(`Maximum ${maximum}.`);
+  if (typeof minItems === "number" && minItems > 0) hints.push(`At least ${minItems} ${minItems === 1 ? "item" : "items"}.`);
+  if (typeof maxItems === "number") hints.push(`At most ${maxItems} items.`);
+  return hints;
 }
 
 function mapValues(record: Record<string, unknown>, map: (value: unknown) => unknown): Record<string, unknown> {
