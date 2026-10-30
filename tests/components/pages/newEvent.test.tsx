@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Activity, useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { GeneratingPanel } from "@/components/events/GeneratingPanel";
 import { NewEventWizard } from "@/components/events/NewEventWizard";
@@ -224,6 +225,59 @@ describe("NewEventWizard, steps 2 and 3", () => {
   it("returns to an unreached step's furthest point when the URL skips ahead", async () => {
     await open("/events/new?step=3");
     expect(stepHeading()).toHaveTextContent("Step 1 of 3");
+  });
+});
+
+describe("leaving and coming back (Next keeps the page hidden with React Activity)", () => {
+  function Page() {
+    const [mode, setMode] = useState<"visible" | "hidden">("visible");
+    return (
+      <>
+        <button onClick={() => setMode((m) => (m === "visible" ? "hidden" : "visible"))}>Leave or return</button>
+        <Activity mode={mode}>
+          <NewEventWizard />
+        </Activity>
+      </>
+    );
+  }
+
+  async function openPage() {
+    setUrl("/events/new");
+    const services = testServices({ profile: { homeCity: "Pune" } });
+    renderApp(<Page />, { services });
+    await screen.findByRole("heading", { name: "Step 1 of 3: Basics" });
+    return services;
+  }
+
+  async function leaveAndReturn() {
+    const toggle = screen.getByRole("button", { name: "Leave or return", hidden: true });
+    fireEvent.click(toggle);
+    fireEvent.click(toggle);
+    await screen.findByRole("heading", { name: "Step 1 of 3: Basics" });
+  }
+
+  it("starts blank again, keeping nothing from the last visit", async () => {
+    await openPage();
+    fillBasics();
+    expect(screen.getByLabelText("Guests")).toHaveValue(350);
+    await leaveAndReturn();
+    expect(screen.getByLabelText("Guests")).toHaveValue(null);
+    expect(screen.getByLabelText("Event date")).toHaveValue("");
+  });
+
+  it("does not create a second event from the earlier answers (reported on the live site)", async () => {
+    const services = await openPage();
+    const create = vi.spyOn(services.events, "create");
+    fillBasics();
+    await userEvent.click(screen.getByRole("button", { name: "Next: Shape" }));
+    await waitFor(() => expect(stepHeading()).toHaveTextContent("Step 2"));
+    await userEvent.click(screen.getByRole("button", { name: "Next: Who it's for" }));
+    await waitFor(() => expect(stepHeading()).toHaveTextContent("Step 3"));
+    await userEvent.click(screen.getByRole("button", { name: "Create my plan" }));
+    await waitFor(() => expect(create).toHaveBeenCalledTimes(1));
+    setUrl("/events/new");
+    await leaveAndReturn();
+    expect(create).toHaveBeenCalledTimes(1);
   });
 });
 

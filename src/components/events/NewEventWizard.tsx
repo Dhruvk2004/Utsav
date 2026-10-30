@@ -39,6 +39,10 @@ export function NewEventWizard() {
   const { profiles } = useServices();
   const load = useCallback((signal: AbortSignal) => profiles.load(signal), [profiles]);
   const { state } = useAsync(load);
+  // Next keeps a page you leave alive but hidden (React Activity), and its effects run again on return.
+  // Starting over when hidden means "New event" is always blank and a finished create is never re-sent.
+  const [visit, setVisit] = useState(0);
+  useEffect(() => () => setVisit((n) => n + 1), []);
   if (state.status === "loading") {
     return (
       <PageColumn>
@@ -51,7 +55,7 @@ export function NewEventWizard() {
     );
   }
   // Without a profile the wizard still works; it just starts with no defaults.
-  return <WizardFlow profile={state.status === "ready" ? state.data : null} />;
+  return <WizardFlow key={visit} profile={state.status === "ready" ? state.data : null} />;
 }
 
 type Phase = { kind: "form" } | { kind: "generating"; mode: PlanMode; form: WizardForm };
