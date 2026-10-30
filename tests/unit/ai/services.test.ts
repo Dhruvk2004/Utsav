@@ -166,6 +166,18 @@ describe("ideasDraft (T4)", () => {
   });
 });
 
+describe("ideasDraft long descriptions", () => {
+  it("shortens a long description at a word break (real Gemini regression)", async () => {
+    const plan = { ...birthday(), ideas: [] };
+    const model = fakeModel({ json: [{ ideas: [idea("Long", { description: "word ".repeat(100).trim() })] }] });
+    const draft = await ideasDraft(model, plan, { role: "parent", budgetStyle: "balanced" }, { focus: [], instruction: "" }, TODAY);
+    const { op } = draft.items[0];
+    const text = op.type === "add_idea" ? op.idea.description : "";
+    expect(text.length).toBeLessThanOrEqual(300);
+    expect(text.endsWith("word…")).toBe(true);
+  });
+});
+
 describe("whatifReply (T3)", () => {
   it("returns weights, filtered notes and trade-offs", async () => {
     const model = fakeModel({

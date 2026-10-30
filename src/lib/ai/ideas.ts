@@ -83,7 +83,7 @@ export async function ideasDraft(
     reply.ideas.map((idea) => ({
       ...idea,
       title: filter.clean(idea.title).slice(0, 80),
-      description: filter.clean(idea.description).slice(0, 300),
+      description: clipAtWord(filter.clean(idea.description), 300),
       basis: filterBasis(idea.basis),
     })),
   ).filter((idea) => idea.title.length > 0);
@@ -92,6 +92,12 @@ export async function ideasDraft(
 }
 
 /** The fallback: the idea library filtered by the section 7 rules, or null when nothing fits. */
+/** Shortens at a word break, so a long reply never ends mid-word. */
+function clipAtWord(text: string, max: number): string {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max - 1).replace(/\s+\S*$/, "")}…`;
+}
+
 export function libraryDraft(plan: EventDoc, input: IdeasPromptInput): ProposalDraft | null {
   const ideas = libraryIdeas(plan, input.focus, MAX_IDEAS);
   return ideas.length === 0 ? null : asDraft(ideas, input.instruction, { origin: "library", model: "library", fallback: true });
