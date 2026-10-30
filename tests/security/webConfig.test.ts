@@ -247,6 +247,8 @@ describe("repository, image and rules hygiene", () => {
       } catch {
         return [];
       }
+      // The Firebase web API key is public by design and must be committed for the build (README "Deploy").
+      if (file === ".env.production") text = text.replace(/^NEXT_PUBLIC_FIREBASE_API_KEY=.*$/m, "");
       return patterns.filter((pattern) => pattern.test(text)).map((pattern) => `${file}: ${pattern}`);
     });
     expect(hits).toEqual([]);
