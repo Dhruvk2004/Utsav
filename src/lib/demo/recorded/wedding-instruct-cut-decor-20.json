@@ -1,0 +1,30 @@
+{
+  "touchpoint": "instruct",
+  "instruction": "Cut decor spend by 20%",
+  "keywords": ["decor", "cut", "20", "spend", "cheaper", "reduce"],
+  "items": [
+    {
+      "op": { "type": "adjust_budget_category", "lineId": "line-decor", "mode": "percent_change", "value": -20, "rebalance": "change_total" },
+      "rationale": "You asked to cut decor by 20%; the saving lowers the total."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Reuse haldi marigolds for mehndi",
+          "description": "Keep the haldi marigold strings and drapes up for the mehndi the same afternoon, so one set of flowers dresses both.",
+          "category": "decor",
+          "estimatedCost": 0,
+          "costBasis": "per event",
+          "basis": ["functions"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "Haldi and mehndi are on the same day, so the flowers can do double duty."
+    },
+    {
+      "op": { "type": "add_task", "title": "Ask the decorator for a reduced-scope quote", "category": "Decor", "daysBefore": 50 },
+      "rationale": "A smaller brief keeps the decorator inside the new amount."
+    }
+  ]
+}

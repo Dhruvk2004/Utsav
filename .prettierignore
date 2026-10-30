@@ -1,0 +1,14 @@
+# Generated, vendored or not source: Prettier formats the code, configs and test suites only.
+node_modules
+.next
+coverage
+test-results
+playwright-report
+playwright-report-emulators
+package-lock.json
+next-env.d.ts
+*.md
+*.html
+docs
+public
+src/lib/demo/recorded

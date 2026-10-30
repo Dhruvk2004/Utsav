@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Utsav">
+  <title>Utsav</title>
+  <!-- v3 mark: a side-view clay diya with a pronounced spout and wick (right); the flame rises from the wick in an asymmetric S-curve and carries a check cut in tile colour. Tile #4B1D5C, bowl + wick #FBF7F1, flame #F4A51C. Same colours in both themes; on dark surfaces the Logo component adds a #D8B4E2 ring (design-system 1.2). -->
+  <rect width="64" height="64" rx="15" fill="#4B1D5C"/>
+  <path d="M7.5 38.5H43l12.5-5.5-5.8 9.6C46.2 50 38 55 27.5 55 16.2 55 8.4 48.2 7.5 38.5zM50.4 35.6v-4.4a1.3 1.3 0 0 1 2.6 0v3.3z" fill="#FBF7F1"/>
+  <path d="M51.7 29.4c-6.4-1.3-13.9-4.9-13.9-12.6 0-6 4.6-8.4 6.4-14.8 1.6 4.3 4.9 6.3 7.7 8.8 2.6 2.4 4.1 5.2 4.1 8.8 0 4.4-1.6 7.5-4.3 9.8z" fill="#F4A51C"/>
+  <path d="M41.6 17.6l3.7 3.7 6.6-7.4" fill="none" stroke="#4B1D5C" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

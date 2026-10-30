@@ -1,0 +1,32 @@
+{
+  "lines": [
+    { "category": "Venue", "percent": 21 },
+    { "category": "Catering", "percent": 34 },
+    { "category": "Decor", "percent": 9 },
+    { "category": "Attire & jewellery", "percent": 11 },
+    { "category": "Photography", "percent": 10 },
+    { "category": "Entertainment", "percent": 5 },
+    { "category": "Invitations", "percent": 4 },
+    { "category": "Fireworks", "percent": 2 }
+  ],
+  "notes": [
+    "Venue and catering are mostly booked, so they move least.",
+    "Photography is already over its line; it gets a little more room."
+  ],
+  "tradeoffs": [
+    {
+      "kind": "idea",
+      "title": "DJ and dhol instead of a live band at the sangeet",
+      "detail": "A DJ with two dhol players keeps the dance floor full for less than a live band.",
+      "category": "entertainment",
+      "estimatedCost": 60000
+    },
+    {
+      "kind": "task",
+      "title": "Share one decor setup between haldi and mehndi",
+      "detail": "Ask the decorator to reuse the haldi setup for the mehndi the same day.",
+      "category": "Decor",
+      "daysBefore": 20
+    }
+  ]
+}

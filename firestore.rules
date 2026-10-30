@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Utsav (spec 8.3). Every application read and write goes through the server's route handlers with
+// the Admin SDK, which bypasses these rules; the web client uses Firebase only for Google sign-in.
+// So clients are denied everything (defence in depth). If client reads are enabled later
+// (Stretch: realtime), the commented owner-only rules are the intended policy.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read: if false;   // future: request.auth != null && request.auth.uid == uid
+      allow write: if false;
+    }
+
+    match /events/{eventId} {
+      allow read: if false;   // future: request.auth != null && request.auth.uid == resource.data.ownerUid
+      allow write: if false;
+      // history, proposals and private/share are server-only.
+      match /{sub=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // Keyed by the SHA-256 of the share token; read by the server for /s/[token] only.
+    match /shares/{tokenHash} {
+      allow read, write: if false;
+    }
+
+    // meta/demoUsage and anything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -39,3 +39,28 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+
+# keep the example env file and the public Firebase web config for production builds
+!.env.example
+!.env.production
+
+# local tooling
+/.claude/
+
+# service-account keys (keep them outside the repo; this is a safety net)
+*service-account*.json
+
+# firebase emulators and the signed-in E2E report
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+database-debug.log*
+pubsub-debug.log*
+storage-debug.log*
+*-debug.log
+/playwright-report-emulators/

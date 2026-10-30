@@ -1,0 +1,19 @@
+{
+  "touchpoint": "instruct",
+  "instruction": "Add volunteer tasks for the event day",
+  "keywords": ["volunteer", "volunteers", "task", "tasks", "event day"],
+  "items": [
+    {
+      "op": { "type": "add_task", "title": "Assign rangoli judges and score sheets", "category": "People", "daysBefore": 1 },
+      "rationale": "Judges need their age-group sheets before the competition starts."
+    },
+    {
+      "op": { "type": "add_task", "title": "Fire-safety walk-through with security staff", "category": "Safety", "daysBefore": 0 },
+      "rationale": "600 residents and diyas: check the exits and extinguishers on the day."
+    },
+    {
+      "op": { "type": "add_task", "title": "Run the volunteer help desk", "category": "People", "daysBefore": 0 },
+      "rationale": "One desk for lost kids, first aid and stall questions."
+    }
+  ]
+}

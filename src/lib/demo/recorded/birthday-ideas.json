@@ -1,0 +1,52 @@
+{
+  "touchpoint": "ideas",
+  "instruction": "",
+  "keywords": [],
+  "items": [
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Peppa's muddy-puddle corner",
+          "description": "Blue mats, puddle cut-outs and rain boots for photos, like Peppa's favourite game.",
+          "category": "decor",
+          "estimatedCost": 6000,
+          "costBasis": "per event",
+          "basis": ["honoree.interests:Peppa Pig", "honoree.age"],
+          "effort": "mixed"
+        }
+      },
+      "rationale": "A six-year-old Peppa Pig fan will love jumping in muddy puddles."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Cartoon tattoo stall",
+          "description": "Temporary cartoon tattoos applied by a parent volunteer while kids wait for cake.",
+          "category": "activity",
+          "estimatedCost": 2500,
+          "costBasis": "per event",
+          "basis": ["honoree.interests:cartoons", "guests.kids"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "Quick for 25 kids and fits the cartoon theme."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Peppa story-time circle",
+          "description": "A short read-aloud of a Peppa Pig story before the cake, with cushions on the floor.",
+          "category": "entertainment",
+          "estimatedCost": 1500,
+          "costBasis": "per event",
+          "basis": ["honoree.age", "honoree.interests:Peppa Pig"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "Calms the room before the cake for six-year-olds."
+    }
+  ]
+}

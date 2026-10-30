@@ -1,0 +1,30 @@
+{
+  "touchpoint": "instruct",
+  "instruction": "Add a painting station",
+  "keywords": ["paint", "painting", "station", "art"],
+  "items": [
+    {
+      "op": { "type": "add_task", "title": "Buy easels, washable paints and aprons", "category": "Activities", "daysBefore": 7 },
+      "rationale": "Supplies for 25 kids need a week to arrive."
+    },
+    {
+      "op": { "type": "adjust_budget_category", "lineId": "line-entertainment", "mode": "change_amount", "value": 3000, "rebalance": "to_contingency" },
+      "rationale": "Easels and paints cost about ₹3,000; Contingency can cover it."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Mini painting station",
+          "description": "Five easels, washable paints and kid-size aprons; each child paints a Peppa scene to take home.",
+          "category": "activity",
+          "estimatedCost": 4500,
+          "costBasis": "per event",
+          "basis": ["honoree.interests:painting", "guests.kids"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "She loves painting and 25 kids are coming."
+    }
+  ]
+}

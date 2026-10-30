@@ -1,0 +1,52 @@
+{
+  "touchpoint": "ideas",
+  "instruction": "",
+  "keywords": [],
+  "items": [
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Dhol and lavani at the sangeet",
+          "description": "Open the sangeet with a dhol entry and close it with a lavani set, so both families' music gets a moment.",
+          "category": "entertainment",
+          "estimatedCost": 30000,
+          "costBasis": "per event",
+          "basis": ["details.tradition:marathi", "details.tradition:punjabi", "functions"],
+          "effort": "vendor"
+        }
+      },
+      "rationale": "Mixes the Marathi and Punjabi traditions in one evening."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Marigold and mogra entrance arch",
+          "description": "A pastel arch of marigold and mogra at the venue gate, in season in December.",
+          "category": "decor",
+          "estimatedCost": 18000,
+          "costBasis": "per event",
+          "basis": ["details.vibe", "date.season"],
+          "effort": "vendor"
+        }
+      },
+      "rationale": "Fits the pastel, floral vibe and the winter flower season."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Kids' corner during the pheras",
+          "description": "A supervised craft corner near the mandap so the 30 children stay busy during the longer rituals.",
+          "category": "activity",
+          "estimatedCost": 12000,
+          "costBasis": "per event",
+          "basis": ["guests.kids", "functions"],
+          "effort": "mixed"
+        }
+      },
+      "rationale": "30 kids are coming and the wedding rituals run for hours."
+    }
+  ]
+}

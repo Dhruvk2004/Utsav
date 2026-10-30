@@ -1,0 +1,28 @@
+node_modules
+.next
+coverage
+test-results
+playwright-report
+.git
+.env*
+!.env.example
+# The public Firebase web config the production build inlines (see README "Deploy")
+!.env.production
+*.md
+!README.md
+# Service-account keys stay outside the image (Cloud Run uses its service account)
+*service-account*.json
+# Keys, certificates and local agent settings never enter the build context
+*.pem
+*.key
+*.p12
+.claude
+# Not needed to build or run the app: smaller Cloud Build upload, faster build
+docs
+e2e
+tests
+coverage
+playwright-report-emulators
+.github
+*.log
+.DS_Store

@@ -1,0 +1,52 @@
+{
+  "touchpoint": "ideas",
+  "instruction": "",
+  "keywords": [],
+  "items": [
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Kids' rangoli workshop before the competition",
+          "description": "A one-hour workshop the weekend before, so kids in each age group of the rangoli competition can practise their designs.",
+          "category": "activity",
+          "estimatedCost": 3000,
+          "costBasis": "per event",
+          "basis": ["details.occasion:diwali", "guests.kids", "profile.role:community"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "150 kids and a rangoli competition by age group: practice helps the youngest."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Diya-lit walkway for elderly residents",
+          "description": "Line the path from the lift lobby to the seating with diyas and handrail lights, with chairs along the way.",
+          "category": "decor",
+          "estimatedCost": 8000,
+          "costBasis": "per event",
+          "basis": ["guests.elderly", "details.occasion:diwali"],
+          "effort": "mixed"
+        }
+      },
+      "rationale": "90 elderly residents will walk to the terrace after dark."
+    },
+    {
+      "op": {
+        "type": "add_idea",
+        "idea": {
+          "title": "Sweets swap across traditions",
+          "description": "Each wing brings a Diwali sweet from its home state to a shared table, labelled with the state's name.",
+          "category": "food",
+          "estimatedCost": null,
+          "costBasis": "per event",
+          "basis": ["details.traditionOther", "profile.role:community"],
+          "effort": "diy"
+        }
+      },
+      "rationale": "Residents come from many states; this shares their festival food."
+    }
+  ]
+}

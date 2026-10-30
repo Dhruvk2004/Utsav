@@ -1,0 +1,44 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerUid", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "details.eventDate", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerUid", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "details.eventDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "proposals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "touchpoint", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "history",
+      "fieldPath": "expireAt",
+      "ttl": true,
+      "indexes": []
+    },
+    {
+      "collectionGroup": "proposals",
+      "fieldPath": "expireAt",
+      "ttl": true,
+      "indexes": []
+    }
+  ]
+}

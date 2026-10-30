@@ -1,0 +1,512 @@
+[
+  {
+    "title": "Cartoon-character decor and cake",
+    "description": "Decor, balloons and a cake built around the birthday child's favourite cartoon characters.",
+    "category": "decor",
+    "estimatedCost": 8000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["cartoon", "peppa", "disney", "chhota bheem", "doraemon", "paw patrol"],
+      "ages": [1, 9]
+    }
+  },
+  {
+    "title": "Kids' painting station with aprons",
+    "description": "Easels, washable paints and aprons so every child paints a small canvas to take home.",
+    "category": "activity",
+    "estimatedCost": 150,
+    "costBasis": "per kid",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["paint", "art", "drawing", "colour"],
+      "kids": true
+    }
+  },
+  {
+    "title": "Mini art kits as return gifts",
+    "description": "Small kits with crayons, a sketch pad and stickers instead of plastic toys.",
+    "category": "favours",
+    "estimatedCost": 120,
+    "costBasis": "per kid",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["paint", "art", "drawing"],
+      "ages": [3, 12]
+    }
+  },
+  {
+    "title": "Character meet-and-greet",
+    "description": "A performer dressed as a favourite cartoon character for photos and a short game.",
+    "category": "entertainment",
+    "estimatedCost": 6000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["cartoon", "peppa", "disney", "superhero"],
+      "ages": [2, 8]
+    }
+  },
+  {
+    "title": "Puppet show",
+    "description": "A 30-minute puppet show with a story the children can join in.",
+    "category": "entertainment",
+    "estimatedCost": 5000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["birthday"],
+      "ages": [3, 8],
+      "kids": true
+    }
+  },
+  {
+    "title": "Indoor games corner for rainy days",
+    "description": "Musical chairs, pass-the-parcel and a puddle-free bean-bag toss set up indoors.",
+    "category": "activity",
+    "estimatedCost": 2000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday"],
+      "season": "monsoon",
+      "kids": true
+    }
+  },
+  {
+    "title": "Box-cricket tournament",
+    "description": "Short six-a-side box-cricket matches with a mini trophy for the winning team.",
+    "category": "activity",
+    "estimatedCost": 4000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["cricket", "sport"],
+      "ages": [8, 17]
+    }
+  },
+  {
+    "title": "Science-show performer",
+    "description": "A hands-on science show with safe experiments (book by category, not by name).",
+    "category": "entertainment",
+    "estimatedCost": 7000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["science", "experiment", "space"],
+      "ages": [6, 14]
+    }
+  },
+  {
+    "title": "Jersey-number cake",
+    "description": "A cake shaped like a sports jersey with the new age as the number.",
+    "category": "food",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["cricket", "football", "sport"]
+    }
+  },
+  {
+    "title": "Milestone photo timeline",
+    "description": "A board with one photo for each month or year so far, ending with today.",
+    "category": "photo",
+    "estimatedCost": 1500,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday"],
+      "ages": [1, 1]
+    }
+  },
+  {
+    "title": "Board-game café corner",
+    "description": "A table of quick board games with a host to teach the rules.",
+    "category": "activity",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday"],
+      "interests": ["board game", "games", "puzzle"],
+      "ages": [13, 59]
+    }
+  },
+  {
+    "title": "Polaroid guestbook",
+    "description": "Guests take an instant photo and write a wish beside it.",
+    "category": "photo",
+    "estimatedCost": 4000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["birthday", "anniversary", "wedding"],
+      "ages": [16, 59]
+    }
+  },
+  {
+    "title": "Travel-themed table names",
+    "description": "Name each table after a place the guest of honour has been or wants to go.",
+    "category": "decor",
+    "estimatedCost": 1000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "interests": ["travel"]
+    }
+  },
+  {
+    "title": "Bilingual welcome boards",
+    "description": "Welcome boards in both families' languages at the entrance and each function.",
+    "category": "decor",
+    "estimatedCost": 3500,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "types": ["wedding"]
+    }
+  },
+  {
+    "title": "Marigold haldi decor with floral jewellery",
+    "description": "Marigold strings and simple floral jewellery for the haldi, reused for photos.",
+    "category": "decor",
+    "estimatedCost": 15000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "types": ["wedding"],
+      "functions": ["haldi"]
+    }
+  },
+  {
+    "title": "Family performances at the sangeet",
+    "description": "Short dance or song slots for each side of the family, with a running order.",
+    "category": "entertainment",
+    "estimatedCost": 25000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "types": ["wedding"],
+      "functions": ["sangeet"]
+    }
+  },
+  {
+    "title": "Winter outdoor evening with heaters",
+    "description": "Patio heaters and a bonfire corner keep an outdoor evening function comfortable.",
+    "category": "experience",
+    "estimatedCost": 20000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["wedding", "anniversary"],
+      "season": "winter"
+    }
+  },
+  {
+    "title": "Covered venue with waterproof decor",
+    "description": "Choose a covered or tented space and fabric decor that survives rain.",
+    "category": "decor",
+    "estimatedCost": null,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "season": "monsoon"
+    }
+  },
+  {
+    "title": "Combined menu counters",
+    "description": "One counter per family's regional favourites so both traditions share the table.",
+    "category": "food",
+    "estimatedCost": 150,
+    "costBasis": "per guest",
+    "effort": "vendor",
+    "tags": {
+      "types": ["wedding"],
+      "traditions": ["marathi", "punjabi", "gujarati", "bengali", "tamil", "telugu", "kannada", "malayali", "rajasthani"]
+    }
+  },
+  {
+    "title": "Dhol entry",
+    "description": "A dhol team for the couple's entry and the baraat.",
+    "category": "entertainment",
+    "estimatedCost": 12000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["wedding", "anniversary"],
+      "traditions": ["punjabi", "sikh", "north_indian"]
+    }
+  },
+  {
+    "title": "Folk musicians at dinner",
+    "description": "A small folk ensemble from the region plays through dinner.",
+    "category": "entertainment",
+    "estimatedCost": 18000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "types": ["wedding", "anniversary"],
+      "traditions": ["rajasthani", "marwari", "gujarati"]
+    }
+  },
+  {
+    "title": "Photo wall by decade",
+    "description": "Photos of the couple from each decade together, for guests to browse.",
+    "category": "photo",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["anniversary"]
+    }
+  },
+  {
+    "title": "Recorded messages from grandchildren",
+    "description": "Short video wishes from family who cannot travel, played after dinner.",
+    "category": "experience",
+    "estimatedCost": 0,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["anniversary", "birthday"],
+      "elderly": true
+    }
+  },
+  {
+    "title": "Recreate the wedding menu",
+    "description": "Serve the dishes from the couple's own wedding day.",
+    "category": "food",
+    "estimatedCost": 600,
+    "costBasis": "per guest",
+    "effort": "vendor",
+    "tags": {
+      "types": ["anniversary"]
+    }
+  },
+  {
+    "title": "Accessible seating and a short programme",
+    "description": "Chairs with arms near the stage, ramps where needed and speeches kept short.",
+    "category": "experience",
+    "estimatedCost": 2000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "elderly": true
+    }
+  },
+  {
+    "title": "Rangoli competition by age group",
+    "description": "Separate rangoli categories for kids, teens and adults, with a residents' vote.",
+    "category": "activity",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["diwali"]
+    }
+  },
+  {
+    "title": "Kids' rangoli workshop before the competition",
+    "description": "A volunteer shows simple dot-grid rangoli patterns so younger children can enter.",
+    "category": "activity",
+    "estimatedCost": 1000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["diwali"],
+      "kids": true
+    }
+  },
+  {
+    "title": "Diya-painting stall for kids",
+    "description": "Plain clay diyas and safe paints; children take their diya home.",
+    "category": "activity",
+    "estimatedCost": 30,
+    "costBasis": "per kid",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["diwali"],
+      "kids": true
+    }
+  },
+  {
+    "title": "Green-cracker alternative: laser show",
+    "description": "A short laser or light show instead of loud fireworks, kinder to elderly residents and pets.",
+    "category": "entertainment",
+    "estimatedCost": 25000,
+    "costBasis": "per event",
+    "effort": "vendor",
+    "tags": {
+      "occasions": ["diwali"]
+    }
+  },
+  {
+    "title": "Diya decor along the walkways",
+    "description": "Rows of diyas or LED diyas along paths and balconies.",
+    "category": "decor",
+    "estimatedCost": 4000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["diwali"]
+    }
+  },
+  {
+    "title": "Potluck food stalls by tradition",
+    "description": "Families run small stalls of their home region's festive dishes.",
+    "category": "food",
+    "estimatedCost": 0,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["community"]
+    }
+  },
+  {
+    "title": "Volunteer roster board",
+    "description": "A visible roster of who runs which stall and shift, with backups.",
+    "category": "experience",
+    "estimatedCost": 0,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "types": ["community"]
+    }
+  },
+  {
+    "title": "Eco-friendly clay idol and tank immersion",
+    "description": "A shadu-clay idol and an artificial immersion tank on the premises.",
+    "category": "ritual",
+    "estimatedCost": 6000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "occasions": ["ganesh_chaturthi"]
+    }
+  },
+  {
+    "title": "Aarti schedule board",
+    "description": "Morning and evening aarti times with the families leading each one.",
+    "category": "ritual",
+    "estimatedCost": 500,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["ganesh_chaturthi", "navratri"]
+    }
+  },
+  {
+    "title": "Flag hoisting and kids' fancy dress",
+    "description": "Flag hoisting at 8 am, then a fancy-dress parade of freedom fighters.",
+    "category": "activity",
+    "estimatedCost": 2000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["independence_day", "republic_day"]
+    }
+  },
+  {
+    "title": "Tricolour food counter",
+    "description": "Saffron, white and green snacks at one counter.",
+    "category": "food",
+    "estimatedCost": 60,
+    "costBasis": "per guest",
+    "effort": "mixed",
+    "tags": {
+      "occasions": ["independence_day", "republic_day"]
+    }
+  },
+  {
+    "title": "Garba night with a dandiya workshop",
+    "description": "A short workshop for beginners before the circle opens to everyone.",
+    "category": "entertainment",
+    "estimatedCost": 10000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "occasions": ["navratri"]
+    }
+  },
+  {
+    "title": "Natural colours and a water-saving play zone",
+    "description": "Herbal gulal and a marked play area with buckets instead of hoses.",
+    "category": "activity",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["holi"]
+    }
+  },
+  {
+    "title": "Puja items checklist and marigold toran",
+    "description": "A shared checklist for the griha pravesh puja and a fresh marigold toran.",
+    "category": "ritual",
+    "estimatedCost": 2500,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["housewarming"]
+    }
+  },
+  {
+    "title": "Plants as return gifts",
+    "description": "Small potted plants for guests to take home.",
+    "category": "favours",
+    "estimatedCost": 120,
+    "costBasis": "per guest",
+    "effort": "diy",
+    "tags": {
+      "occasions": ["housewarming"]
+    }
+  },
+  {
+    "title": "Name-reveal board and cradle decor",
+    "description": "A flower-framed board for the name reveal and a decorated cradle.",
+    "category": "decor",
+    "estimatedCost": 5000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {
+      "occasions": ["naming_ceremony"]
+    }
+  },
+  {
+    "title": "Kids' activity corner",
+    "description": "A supervised corner with colouring, blocks and a mat, so parents can join the event.",
+    "category": "activity",
+    "estimatedCost": 3000,
+    "costBasis": "per event",
+    "effort": "diy",
+    "tags": {
+      "kids": true
+    }
+  },
+  {
+    "title": "Photo booth with simple props",
+    "description": "A backdrop and a few props; guests take their own photos.",
+    "category": "photo",
+    "estimatedCost": 6000,
+    "costBasis": "per event",
+    "effort": "mixed",
+    "tags": {}
+  },
+  {
+    "title": "Live food counter",
+    "description": "One live counter (chaat, dosa or pasta) that guests queue at, cooked fresh.",
+    "category": "food",
+    "estimatedCost": 120,
+    "costBasis": "per guest",
+    "effort": "vendor",
+    "tags": {}
+  }
+]

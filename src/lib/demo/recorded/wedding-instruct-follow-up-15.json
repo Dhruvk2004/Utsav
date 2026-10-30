@@ -1,0 +1,11 @@
+{
+  "touchpoint": "instruct",
+  "instruction": "Make that 15% instead",
+  "keywords": ["15", "instead", "make that"],
+  "items": [
+    {
+      "op": { "type": "adjust_budget_category", "lineId": "line-decor", "mode": "set_amount", "value": 255000, "rebalance": "change_total" },
+      "rationale": "15% below the original ₹3,00,000 for decor is ₹2,55,000."
+    }
+  ]
+}
