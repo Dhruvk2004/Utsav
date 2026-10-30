@@ -117,7 +117,7 @@ export function OnboardingFlow({ profile, rerun }: { profile: UserProfile; rerun
     setDone(false);
     setReached((r) => (r < to ? to : r));
     setCurrent(to);
-    router.push(`/onboarding?${new URLSearchParams({ ...(rerun ? { rerun: "1" } : {}), step: String(to) })}`, { scroll: false });
+    window.history.pushState(null, "", `/onboarding?${new URLSearchParams({ ...(rerun ? { rerun: "1" } : {}), step: String(to) })}`);
   }
 
   function back() {

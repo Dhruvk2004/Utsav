@@ -103,7 +103,8 @@ export function WizardFlow({ profile }: { profile: UserProfile | null }) {
     if (found.length) return;
     const to = (step + 1) as WizardStep;
     setReached((r) => (r < to ? to : r));
-    router.push(`/events/new?step=${to}`, { scroll: false });
+    // The browser's own history: a step needs nothing from the server, so it should not wait for it.
+    window.history.pushState(null, "", `/events/new?step=${to}`);
   }
 
   function submit(mode: PlanMode) {
@@ -111,7 +112,7 @@ export function WizardFlow({ profile }: { profile: UserProfile | null }) {
     const failing = firstStepWithIssues(form, today);
     if (failing) {
       showIssues(failing, wizardIssues(form, today, failing));
-      if (failing !== step) router.push(`/events/new?step=${failing}`, { scroll: false });
+      if (failing !== step) window.history.pushState(null, "", `/events/new?step=${failing}`);
       return;
     }
     setNotice(null);

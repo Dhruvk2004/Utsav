@@ -89,7 +89,7 @@ async function toStep2(url?: string) {
 describe("NewEventWizard, steps 2 and 3", () => {
   it("lists the wedding functions with unique names, adds and removes rows", async () => {
     await toStep2();
-    expect(navigation.push).toHaveBeenCalledWith("/events/new?step=2", { scroll: false });
+    expect(window.history.pushState).toHaveBeenCalledWith(null, "", "/events/new?step=2");
     expect(stepHeading()).toHaveFocus();
     expect(screen.getByLabelText("Name, function 1")).toHaveValue("Haldi");
     await userEvent.click(screen.getByRole("button", { name: "Remove Haldi" }));

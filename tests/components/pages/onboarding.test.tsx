@@ -83,10 +83,10 @@ describe("OnboardingWizard", () => {
     await userEvent.type(screen.getByRole("combobox", { name: "Home city" }), "Pune");
     await userEvent.click(screen.getByRole("button", { name: "Continue" }));
     await waitFor(() => expect(heading()).toHaveTextContent("What do you usually plan?"));
-    expect(navigation.push).toHaveBeenLastCalledWith("/onboarding?step=2", { scroll: false });
+    expect(window.history.pushState).toHaveBeenLastCalledWith(null, "", "/onboarding?step=2");
     await userEvent.click(screen.getByRole("button", { name: "Continue" }));
     await screen.findByRole("heading", { name: /Traditions and food/ });
-    expect(navigation.push).toHaveBeenLastCalledWith("/onboarding?step=3", { scroll: false });
+    expect(window.history.pushState).toHaveBeenLastCalledWith(null, "", "/onboarding?step=3");
     // The page's Back is the browser's Back: one history entry, to step 2, not out of onboarding.
     await userEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(navigation.back).toHaveBeenCalledTimes(1);
@@ -101,7 +101,7 @@ describe("OnboardingWizard", () => {
     expect(screen.getByRole("progressbar", { name: "Onboarding progress" })).toHaveAttribute("aria-valuetext", "Step 1 of 4");
     await userEvent.type(screen.getByRole("combobox", { name: "Home city" }), "Pune");
     await userEvent.click(screen.getByRole("button", { name: "Continue" }));
-    await waitFor(() => expect(navigation.push).toHaveBeenLastCalledWith("/onboarding?rerun=1&step=2", { scroll: false }));
+    await waitFor(() => expect(window.history.pushState).toHaveBeenLastCalledWith(null, "", "/onboarding?rerun=1&step=2"));
   });
 
   it("skips optional steps, blocks an over-long Mixed/other answer and marks onboarding done on the last skip", async () => {

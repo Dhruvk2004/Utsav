@@ -30,4 +30,11 @@ export function resetNavigation() {
     setUrl(url);
   });
   navigation.back.mockImplementation(() => setUrl(history.pop() ?? "/"));
+  // Step changes use the browser's own history, which Next syncs with useSearchParams.
+  if (typeof window !== "undefined") {
+    vi.spyOn(window.history, "pushState").mockImplementation((_state, _title, url) => {
+      history.push(`${navigation.pathname}?${navigation.searchParams}`);
+      setUrl(String(url));
+    });
+  }
 }
