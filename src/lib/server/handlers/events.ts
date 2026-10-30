@@ -1,5 +1,6 @@
 import { generatePlan } from "@/lib/ai/planService";
 import { createEventDateIssues, createEventSchema, type CreateEventRequest } from "@/lib/domain/model/createEvent";
+import { eventDocSchema } from "@/lib/domain/model/event";
 import type { UserDoc } from "@/lib/domain/model/user";
 import { buildPlan } from "@/lib/domain/planner";
 import type { EventPlan } from "@/lib/domain/schemas";
@@ -121,6 +122,12 @@ export async function createEvent(request: Request, deps: ServerDeps): Promise<R
   const source = input.mode === "blank" ? "blank" : plan.source;
   const options = { ownerUid: session.uid, today: clock.today, now: clock.now, budgetStyle: profile?.budgetStyle ?? null };
   const event = planToEventDoc(plan, input, { ...options, source });
+  // Reads validate every document, so saving one that fails would leave an event nobody can open.
+  if (source === "ai" && !eventDocSchema.safeParse(event).success) {
+    deps.log("plan_rejected_on_save", { uid: session.uid });
+    const eventId = await repo.create(templateEventDoc(input, options), null);
+    return json({ eventId, source: "template" }, { status: 201 });
+  }
   const creation = source === "ai" ? creationHistory(event, templateEventDoc(input, options), clock) : null;
   const eventId = await repo.create(event, creation);
   return json({ eventId, source }, { status: 201 });

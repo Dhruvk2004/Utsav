@@ -103,6 +103,18 @@ describe("progress", () => {
   });
 });
 
+describe("task ids", () => {
+  it("stay within the stored 80-character limit for the longest titles (real Gemini regression)", () => {
+    const [task] = scheduleTasks("2027-06-20", "2026-10-30", [{ title: "a".repeat(120), category: "Decor", daysBefore: 730 }]);
+    expect(task.id.length).toBeLessThanOrEqual(80);
+  });
+
+  it("are unchanged for ordinary titles", () => {
+    const [task] = scheduleTasks("2027-06-20", "2026-10-30", [{ title: "Book the venue", category: "Venue", daysBefore: 30 }]);
+    expect(task.id).toBe("task-book-the-venue-30");
+  });
+});
+
 describe("slugId", () => {
   it("keeps Devanagari text so Hindi plans still get unique ids", () => {
     expect(slugId("task", "मेहंदी की तैयारी", 2)).toBe("task-मेहंदी-की-तैयारी-2");

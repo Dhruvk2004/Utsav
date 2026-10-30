@@ -17,17 +17,25 @@ async function instruct(page: Page, instruction: string) {
   return panel.getByRole("region", { name: new RegExp(`suggestions? for "${instruction}"`) });
 }
 
+/** A signed-in visitor is redirected at once, which can interrupt this navigation; only where it lands matters. */
+async function visitRedirecting(page: Page, url: string) {
+  await page.goto(url).catch((error: Error) => {
+    if (!/ERR_ABORTED|interrupted by another navigation/.test(error.message)) throw error;
+  });
+  await page.waitForLoadState();
+}
+
 test.describe("guards and onboarding (spec 3.3)", () => {
   test("a new user is onboarded, then the guards route by profile state", async ({ page }) => {
     const user = await onboard(page);
     // Onboarded: `/`, `/signin` and `/onboarding` go to the dashboard; `?next=` is honoured.
-    await page.goto("/");
+    await visitRedirecting(page, "/");
     await expect(page).toHaveURL(/\/dashboard$/);
-    await page.goto("/signin");
+    await visitRedirecting(page, "/signin");
     await expect(page).toHaveURL(/\/dashboard$/);
-    await page.goto("/signin?next=/settings");
+    await visitRedirecting(page, "/signin?next=/settings");
     await expect(page).toHaveURL(/\/settings$/);
-    await page.goto("/onboarding");
+    await visitRedirecting(page, "/onboarding");
     await expect(page).toHaveURL(/\/dashboard$/);
     // Re-run keeps the saved answers.
     await page.goto("/onboarding?rerun=1");
@@ -41,11 +49,7 @@ test.describe("guards and onboarding (spec 3.3)", () => {
   test("an open redirect through ?next= is refused", async ({ page }) => {
     await onboard(page);
     for (const next of ["https://evil.example/", "//evil.example/", "/\\evil.example"]) {
-      // A signed-in visitor is redirected at once, which can abort this navigation; only where it lands matters.
-      await page.goto(`/signin?next=${encodeURIComponent(next)}`).catch((error: Error) => {
-        if (!error.message.includes("ERR_ABORTED")) throw error;
-      });
-      await page.waitForLoadState();
+      await visitRedirecting(page, `/signin?next=${encodeURIComponent(next)}`);
       expect(new URL(page.url()).origin).toBe(BASE_URL);
     }
   });

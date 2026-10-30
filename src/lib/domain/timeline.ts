@@ -53,7 +53,8 @@ export function scheduleTasks(
     .map((task) => {
       const { dueDate, rushed } = dueDateFor(eventDate, today, task.daysBefore);
       return {
-        id: slugId("task", task.title, task.daysBefore),
+        // Titles can run to 120 characters and stored ids to 80, so only the start of the title goes in.
+        id: slugId("task", task.title.slice(0, 60), task.daysBefore),
         title: task.title.trim(),
         category: task.category.trim(),
         daysBefore: Math.min(task.daysBefore, lead),
