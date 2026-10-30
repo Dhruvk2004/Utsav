@@ -98,10 +98,26 @@ export function Button({
   );
 }
 
-type ButtonLinkProps = ComponentProps<typeof Link> & ButtonStyle & { icon?: ReactNode };
+type ButtonLinkProps = ComponentProps<typeof Link> &
+  ButtonStyle & {
+    icon?: ReactNode;
+    /**
+     * Loads the page fresh. Public pages need this to reach an app page: a client-side move keeps the
+     * document's stricter Content Security Policy, which blocks Google sign-in (src/lib/server/csp.ts).
+     */
+    fullLoad?: boolean;
+  };
 
 /** A link that looks like a button, for navigation actions such as "New event". */
-export function ButtonLink({ variant, size, iconOnly, block, icon, className, children, ...props }: ButtonLinkProps) {
+export function ButtonLink({ variant, size, iconOnly, block, icon, className, children, fullLoad, ...props }: ButtonLinkProps) {
+  if (fullLoad) {
+    return (
+      <a href={String(props.href)} className={cx(buttonClasses({ variant, size, iconOnly, block }), className)}>
+        {icon}
+        {children}
+      </a>
+    );
+  }
   return (
     <Link className={cx(buttonClasses({ variant, size, iconOnly, block }), className)} {...props}>
       {icon}

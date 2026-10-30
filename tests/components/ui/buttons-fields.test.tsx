@@ -61,6 +61,18 @@ describe("Button", () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
+  it("can link with a full page load, styled the same (public pages into the app)", () => {
+    render(
+      <ButtonLink href="/signin" fullLoad size="sm">
+        Sign in
+      </ButtonLink>,
+    );
+    const link = screen.getByRole("link", { name: "Sign in" });
+    expect(link).toHaveAttribute("href", "/signin");
+    expect(link).toHaveClass(...buttonClasses({ size: "sm" }).split(" "));
+    expect(link).not.toHaveAttribute("fullLoad");
+  });
+
   it("shows its icon when idle and supports variants, sizes and links", () => {
     render(
       <>

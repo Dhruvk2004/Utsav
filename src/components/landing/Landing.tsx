@@ -36,7 +36,7 @@ export function Landing() {
                 made for your people.
               </p>
               <div className="flex flex-wrap gap-3">
-                <ButtonLink href="/signin" variant="google" size="lg" icon={<GoogleIcon />} className="max-sm:w-full">
+                <ButtonLink href="/signin" fullLoad variant="google" size="lg" icon={<GoogleIcon />} className="max-sm:w-full">
                   Continue with Google
                 </ButtonLink>
                 <ButtonLink href="/demo" variant="hero-outline" size="lg" className="max-sm:w-full">

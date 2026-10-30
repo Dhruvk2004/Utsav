@@ -13,7 +13,7 @@ export function ErrorPanel({ reference, onRetry }: { reference?: string; onRetry
         <p className="m-0">Your plan is saved; nothing was lost.</p>
         <div className="flex flex-wrap gap-2">
           <Button onClick={onRetry}>Try again</Button>
-          <ButtonLink href="/dashboard" variant="secondary">
+          <ButtonLink href="/dashboard" fullLoad variant="secondary">
             Go to my events
           </ButtonLink>
         </div>

@@ -9,7 +9,9 @@ export function NotFound() {
         <Logo variant="mark" className="size-16" />
         <h1 className="m-0 font-display text-h1 font-semibold">We couldn&apos;t find that page.</h1>
         <p className="m-0 text-fg-muted">The link may be old, or the plan may have been deleted.</p>
-        <ButtonLink href="/dashboard">Go to my events</ButtonLink>
+        <ButtonLink href="/dashboard" fullLoad>
+          Go to my events
+        </ButtonLink>
       </div>
     </div>
   );

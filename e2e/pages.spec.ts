@@ -41,6 +41,19 @@ test("the skip link is the first Tab stop and lands on main", async ({ page, isM
   await expect(page.locator("main#main")).toBeFocused();
 });
 
+test("public pages reach sign-in with a full page load, so Google's script gets the sign-in policy", async ({ page }) => {
+  // A client-side move would keep the public page's stricter CSP, which blocks Google sign-in (found on the live site).
+  await page.goto("/");
+  await page.evaluate(() => Object.assign(window, { sameDocument: true }));
+  await page
+    .getByRole("link", { name: /sign in|continue with google/i })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/signin/);
+  await expect(page.getByRole("heading", { name: "Sign in to save your plans" })).toBeVisible();
+  expect(await page.evaluate(() => "sameDocument" in window)).toBe(false);
+});
+
 test("an unknown page returns 404 and sign-in explains the missing configuration", async ({ page, request }) => {
   expect((await request.get("/no-such-page")).status()).toBe(404);
   await page.goto("/signin");

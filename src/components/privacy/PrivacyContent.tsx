@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { PRIVACY_CONTACT } from "@/lib/site";
 
@@ -37,7 +36,8 @@ export function PrivacyContent({ selfServeDeletion = false }: { selfServeDeletio
         You can delete any event and everything in it from its Event settings.{" "}
         {selfServeDeletion ? (
           <>
-            Delete your account in <Link href="/settings">Settings</Link>.
+            Delete your account in {/* A full load: this page's stricter CSP must not follow into the app (src/lib/server/csp.ts). */}
+            <a href="/settings">Settings</a>.
           </>
         ) : (
           <>To delete your whole account, email {mail} and we will do it within 30 days.</>

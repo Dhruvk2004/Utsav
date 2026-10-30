@@ -33,7 +33,7 @@ export function SiteHeader({ onHero = false, minimal = false }: { onHero?: boole
               See a sample plan
             </Link>
           </nav>
-          <ButtonLink href="/signin" variant={onHero ? "hero" : "primary"} size={onHero ? "md" : "sm"}>
+          <ButtonLink href="/signin" fullLoad variant={onHero ? "hero" : "primary"} size={onHero ? "md" : "sm"}>
             Sign in
           </ButtonLink>
         </>

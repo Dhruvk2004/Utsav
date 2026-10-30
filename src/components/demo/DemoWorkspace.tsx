@@ -24,7 +24,7 @@ export function SampleBanner() {
         <span className="flex-1">
           <b>Sample plan - not saved.</b> Changes reset when you reload.
         </span>
-        <ButtonLink href="/signin" size="sm">
+        <ButtonLink href="/signin" fullLoad size="sm">
           Create your own
         </ButtonLink>
       </div>
