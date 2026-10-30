@@ -41,7 +41,11 @@ test.describe("guards and onboarding (spec 3.3)", () => {
   test("an open redirect through ?next= is refused", async ({ page }) => {
     await onboard(page);
     for (const next of ["https://evil.example/", "//evil.example/", "/\\evil.example"]) {
-      await page.goto(`/signin?next=${encodeURIComponent(next)}`);
+      // A signed-in visitor is redirected at once, which can abort this navigation; only where it lands matters.
+      await page.goto(`/signin?next=${encodeURIComponent(next)}`).catch((error: Error) => {
+        if (!error.message.includes("ERR_ABORTED")) throw error;
+      });
+      await page.waitForLoadState();
       expect(new URL(page.url()).origin).toBe(BASE_URL);
     }
   });
