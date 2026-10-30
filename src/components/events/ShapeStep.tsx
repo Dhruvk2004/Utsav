@@ -164,7 +164,7 @@ export function ShapeStep({ form, setForm, errors, today }: StepProps) {
         onChange={(e) => setForm((f) => ({ ...f, vibe: e.target.value }))}
         error={errors[fieldId(["vibe"])]}
       />
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid items-start gap-5 md:grid-cols-2">
         <TraditionFields
           id={fieldId(["tradition"])}
           otherId={fieldId(["traditionOther"])}

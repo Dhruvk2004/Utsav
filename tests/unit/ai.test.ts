@@ -1,5 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createGeminiModel, createModelProbe, DEFAULT_MODEL, draftJsonSchema, ModelTruncatedError, type PlanModel } from "@/lib/ai/model";
+import {
+  createGeminiModel,
+  createModelProbe,
+  DEFAULT_MODEL,
+  draftJsonSchema,
+  FALLBACK_MODEL,
+  ModelTruncatedError,
+  PRIMARY_COOLDOWN_MS,
+  PRIMARY_TIMEOUT_MS,
+  type PlanModel,
+} from "@/lib/ai/model";
 import { generatePlan, parseDraft } from "@/lib/ai/planService";
 import { MAX_ATTEMPTS, ReplyParseError as DraftParseError } from "@/lib/ai/reply";
 import { buildPlanPrompt, EMPTY_CONTEXT, SYSTEM_INSTRUCTION } from "@/lib/ai/prompts/plan";
@@ -143,6 +153,73 @@ describe("createGeminiModel", () => {
     );
   });
 
+  describe("falling back when the main model is busy", () => {
+    const busy = Object.assign(new Error("busy"), { status: 503 });
+    const models = () => generateContent.mock.calls.map(([request]) => (request as { model: string }).model);
+
+    it("answers from the lighter model at once, without a thinking level", async () => {
+      generateContent.mockRejectedValueOnce(busy).mockResolvedValueOnce({ text: "{}" });
+      const model = createGeminiModel({ GEMINI_API_KEY: "k" });
+      await expect(model?.generateJson({ systemInstruction: "s", prompt: "p" })).resolves.toBe("{}");
+      expect(models()).toEqual([DEFAULT_MODEL, FALLBACK_MODEL]);
+      expect(generateContent.mock.calls[1][0].config).not.toHaveProperty("thinkingConfig");
+    });
+
+    it("skips the main model for a minute after a failure, then tries it again", async () => {
+      vi.useFakeTimers();
+      try {
+        generateContent.mockRejectedValueOnce(busy).mockResolvedValue({ text: "{}" });
+        const model = createGeminiModel({ GEMINI_API_KEY: "k" });
+        await model?.generateJson({ systemInstruction: "s", prompt: "p" });
+        await model?.generateJson({ systemInstruction: "s", prompt: "p" });
+        expect(models()).toEqual([DEFAULT_MODEL, FALLBACK_MODEL, FALLBACK_MODEL]);
+        vi.advanceTimersByTime(PRIMARY_COOLDOWN_MS);
+        await model?.generateJson({ systemInstruction: "s", prompt: "p" });
+        expect(models().at(-1)).toBe(DEFAULT_MODEL);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("gives the main model a short deadline, and falls back when it hangs", async () => {
+      const deadline = new AbortController();
+      const timeout = vi.spyOn(AbortSignal, "timeout").mockReturnValueOnce(deadline.signal);
+      generateContent.mockImplementationOnce(
+        ({ config }: { config: { abortSignal: AbortSignal } }) =>
+          new Promise((_, reject) => config.abortSignal.addEventListener("abort", () => reject(new Error("timed out")))),
+      );
+      generateContent.mockResolvedValueOnce({ text: "{}" });
+      const model = createGeminiModel({ GEMINI_API_KEY: "k" });
+      const reply = model?.generateJson({ systemInstruction: "s", prompt: "p" });
+      expect(timeout).toHaveBeenCalledWith(PRIMARY_TIMEOUT_MS);
+      deadline.abort();
+      await expect(reply).resolves.toBe("{}");
+      timeout.mockRestore();
+    });
+
+    it("does not retry a request the caller cancelled", async () => {
+      const controller = new AbortController();
+      generateContent.mockImplementationOnce(async () => {
+        controller.abort();
+        throw new Error("aborted");
+      });
+      const model = createGeminiModel({ GEMINI_API_KEY: "k" });
+      await expect(model?.generateJson({ systemInstruction: "s", prompt: "p", signal: controller.signal })).rejects.toThrow("aborted");
+      expect(generateContent).toHaveBeenCalledTimes(1);
+    });
+
+    it("has no fallback on Vertex AI unless one is named, or when the fallback is the main model", async () => {
+      generateContent.mockRejectedValue(busy);
+      const vertex = createGeminiModel({ GOOGLE_GENAI_USE_VERTEXAI: "true", GOOGLE_CLOUD_PROJECT: "demo" });
+      await expect(vertex?.generateJson({ systemInstruction: "s", prompt: "p" })).rejects.toThrow("busy");
+      expect(models()).toEqual([DEFAULT_MODEL]);
+      generateContent.mockClear();
+      const same = createGeminiModel({ GEMINI_API_KEY: "k", GEMINI_MODEL: FALLBACK_MODEL });
+      await expect(same?.generateJson({ systemInstruction: "s", prompt: "p" })).rejects.toThrow("busy");
+      expect(models()).toEqual([FALLBACK_MODEL]);
+    });
+  });
+
   it("uses an API key locally with the default model", async () => {
     generateContent.mockResolvedValue({ text: '{"ok":true}' });
     const model = createGeminiModel({ GEMINI_API_KEY: "test-key" });
@@ -172,7 +249,7 @@ describe("createGeminiModel", () => {
 
   it("asks for function calls only and returns them, throwing when there are none", async () => {
     const tools = [{ name: "set_guests", description: "Set the guest count", parametersJsonSchema: { type: "object" } }];
-    generateContent.mockResolvedValueOnce({ functionCalls: [{ name: "set_guests", args: { total: 450 } }, {}] }).mockResolvedValueOnce({});
+    generateContent.mockResolvedValueOnce({ functionCalls: [{ name: "set_guests", args: { total: 450 } }, {}] }).mockResolvedValue({});
     const model = createGeminiModel({ GEMINI_API_KEY: "k" });
     await expect(model?.callTools({ systemInstruction: "s", prompt: "p", tools, temperature: 0.2 })).resolves.toEqual([
       { name: "set_guests", args: { total: 450 } },

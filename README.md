@@ -166,6 +166,7 @@ The Firebase web config (`NEXT_PUBLIC_FIREBASE_*`) is inlined into the browser b
 | `FIREBASE_SERVICE_ACCOUNT` | the Admin SDK service-account JSON key (or its base64), from Project settings > Service accounts. **Secret.** |
 | `GEMINI_API_KEY` | a Gemini API key from Google AI Studio. **Secret.** |
 | `GEMINI_MODEL` | optional; leave unset to use the `gemini-flash-latest` alias, which follows Google's model retirements |
+| `GEMINI_FALLBACK_MODEL` | optional; tried when the main model is busy, slow or fails. Defaults to `gemini-flash-lite-latest` |
 | `APP_ORIGIN` | `https://<project>.vercel.app` |
 
 4. Set the function region to Mumbai (`bom1`) next to Firestore, and redeploy.

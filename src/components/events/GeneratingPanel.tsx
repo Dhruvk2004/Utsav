@@ -133,7 +133,7 @@ export function GeneratingPanel({ form, mode, onCancelled }: { form: WizardForm;
     <StagedProgress
       title="Building your plan"
       stages={labels.map((label, i) => ({ label, state: STAGES[stage][i] }))}
-      note={mode === "ai" ? "Usually under 12 seconds. If AI is unavailable, we start you from a starter template." : undefined}
+      note={mode === "ai" ? "Usually under 30 seconds. If AI is unavailable, we start you from a starter template." : undefined}
       action={
         <Button
           variant="ghost"

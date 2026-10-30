@@ -57,12 +57,25 @@ export function draftJsonSchema(): Record<string, unknown> {
 }
 
 export type ModelEnv = Partial<
-  Record<"GEMINI_API_KEY" | "GEMINI_MODEL" | "GOOGLE_GENAI_USE_VERTEXAI" | "GOOGLE_CLOUD_PROJECT" | "GOOGLE_CLOUD_LOCATION", string>
+  Record<
+    | "GEMINI_API_KEY"
+    | "GEMINI_MODEL"
+    | "GEMINI_FALLBACK_MODEL"
+    | "GOOGLE_GENAI_USE_VERTEXAI"
+    | "GOOGLE_CLOUD_PROJECT"
+    | "GOOGLE_CLOUD_LOCATION",
+    string
+  >
 > &
   Record<string, string | undefined>;
 
 export const DEFAULT_MODEL = "gemini-flash-latest";
-export const REQUEST_TIMEOUT_MS = 45_000;
+export const FALLBACK_MODEL = "gemini-flash-lite-latest";
+/** The main model gets a short turn, because the fallback can still answer inside the request. */
+export const PRIMARY_TIMEOUT_MS = 18_000;
+export const FALLBACK_TIMEOUT_MS = 30_000;
+/** After a failure the main model is skipped for this long, so nobody waits for it twice. */
+export const PRIMARY_COOLDOWN_MS = 60_000;
 /** Thinking tokens count against these limits, so each leaves room for them on top of the reply. */
 const PLAN_MAX_TOKENS = 12_288;
 /** Every touchpoint other than the plan (spec 6.11). */
@@ -73,6 +86,8 @@ const THINKING_CONFIG = { thinkingLevel: ThinkingLevel.LOW };
 interface GeminiClient {
   client: GoogleGenAI;
   model: string;
+  /** Tried when the main model is busy or fails; null when there is none for this setup. */
+  fallback: string | null;
   /** The Vertex AI location, or "gemini-api" when a local API key is used. */
   location: string;
 }
@@ -85,18 +100,15 @@ function geminiClient(env: ModelEnv): GeminiClient | null {
   const model = env.GEMINI_MODEL || DEFAULT_MODEL;
   if (env.GOOGLE_GENAI_USE_VERTEXAI === "true" && env.GOOGLE_CLOUD_PROJECT) {
     const location = env.GOOGLE_CLOUD_LOCATION || "global";
-    const client = new GoogleGenAI({
-      vertexai: true,
-      project: env.GOOGLE_CLOUD_PROJECT,
-      location,
-      httpOptions: { timeout: REQUEST_TIMEOUT_MS },
-    });
-    return { client, model, location };
+    const client = new GoogleGenAI({ vertexai: true, project: env.GOOGLE_CLOUD_PROJECT, location });
+    // The -latest aliases are Gemini API names, so Vertex AI only falls back to a model named for it.
+    return { client, model, fallback: env.GEMINI_FALLBACK_MODEL || null, location };
   }
   if (env.GEMINI_API_KEY) {
     return {
-      client: new GoogleGenAI({ apiKey: env.GEMINI_API_KEY, httpOptions: { timeout: REQUEST_TIMEOUT_MS } }),
+      client: new GoogleGenAI({ apiKey: env.GEMINI_API_KEY }),
       model,
+      fallback: env.GEMINI_FALLBACK_MODEL || FALLBACK_MODEL,
       location: "gemini-api",
     };
   }
@@ -111,50 +123,92 @@ export class ModelTruncatedError extends Error {
   }
 }
 
+/**
+ * Runs a model call on the main model, then on the fallback if that is busy, slow or fails, so a
+ * demand spike on one model does not send people to the template. A caller's abort is not retried.
+ */
+function modelRunner(gemini: GeminiClient, clock: () => number) {
+  let primarySkippedUntil = 0;
+  return async function run<T>(callerSignal: AbortSignal | undefined, call: (attempt: ModelAttempt) => Promise<T>): Promise<T> {
+    const useFallback = gemini.fallback !== null && gemini.fallback !== gemini.model;
+    const skipPrimary = useFallback && clock() < primarySkippedUntil;
+    if (!skipPrimary) {
+      try {
+        return await call({
+          model: gemini.model,
+          thinkingConfig: THINKING_CONFIG,
+          signal: withTimeout(callerSignal, useFallback ? PRIMARY_TIMEOUT_MS : FALLBACK_TIMEOUT_MS),
+        });
+      } catch (error) {
+        if (!useFallback || callerSignal?.aborted) throw error;
+        primarySkippedUntil = clock() + PRIMARY_COOLDOWN_MS;
+      }
+    }
+    // No thinking level here: the lighter models don't all accept the same ones.
+    return call({ model: gemini.fallback as string, signal: withTimeout(callerSignal, FALLBACK_TIMEOUT_MS) });
+  };
+}
+
+interface ModelAttempt {
+  model: string;
+  thinkingConfig?: typeof THINKING_CONFIG;
+  signal: AbortSignal;
+}
+
+function withTimeout(signal: AbortSignal | undefined, ms: number): AbortSignal {
+  const timeout = AbortSignal.timeout(ms);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
 /** Creates the plan model, or null when nothing is configured (plans then use the starter template). */
 export function createGeminiModel(env: ModelEnv): PlanModel | null {
   const gemini = geminiClient(env);
   if (!gemini) return null;
   const { client, model } = gemini;
   const planSchema = draftJsonSchema();
+  const run = modelRunner(gemini, Date.now);
   return {
     name: model,
     async generateJson({ systemInstruction, prompt, signal, responseSchema, temperature, maxOutputTokens }) {
-      const response = await client.models.generateContent({
-        model,
-        contents: prompt,
-        config: {
-          systemInstruction,
-          responseMimeType: "application/json",
-          responseJsonSchema: responseSchema ?? planSchema,
-          temperature: temperature ?? 0.6,
-          maxOutputTokens: maxOutputTokens ?? PLAN_MAX_TOKENS,
-          thinkingConfig: THINKING_CONFIG,
-          abortSignal: signal,
-        },
+      return run(signal, async (attempt) => {
+        const response = await client.models.generateContent({
+          model: attempt.model,
+          contents: prompt,
+          config: {
+            systemInstruction,
+            responseMimeType: "application/json",
+            responseJsonSchema: responseSchema ?? planSchema,
+            temperature: temperature ?? 0.6,
+            maxOutputTokens: maxOutputTokens ?? PLAN_MAX_TOKENS,
+            ...(attempt.thinkingConfig ? { thinkingConfig: attempt.thinkingConfig } : {}),
+            abortSignal: attempt.signal,
+          },
+        });
+        if (response.candidates?.[0]?.finishReason === FinishReason.MAX_TOKENS) throw new ModelTruncatedError();
+        const text = response.text;
+        if (!text) throw new Error("The model returned an empty response");
+        return text;
       });
-      if (response.candidates?.[0]?.finishReason === FinishReason.MAX_TOKENS) throw new ModelTruncatedError();
-      const text = response.text;
-      if (!text) throw new Error("The model returned an empty response");
-      return text;
     },
     async callTools({ systemInstruction, prompt, tools, temperature, signal }) {
-      const response = await client.models.generateContent({
-        model,
-        contents: prompt,
-        config: {
-          systemInstruction,
-          tools: [{ functionDeclarations: tools.map((tool) => ({ ...tool })) }],
-          toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY } },
-          temperature,
-          maxOutputTokens: MAX_OUTPUT_TOKENS,
-          thinkingConfig: THINKING_CONFIG,
-          abortSignal: signal,
-        },
+      return run(signal, async (attempt) => {
+        const response = await client.models.generateContent({
+          model: attempt.model,
+          contents: prompt,
+          config: {
+            systemInstruction,
+            tools: [{ functionDeclarations: tools.map((tool) => ({ ...tool })) }],
+            toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY } },
+            temperature,
+            maxOutputTokens: MAX_OUTPUT_TOKENS,
+            ...(attempt.thinkingConfig ? { thinkingConfig: attempt.thinkingConfig } : {}),
+            abortSignal: attempt.signal,
+          },
+        });
+        const calls = (response.functionCalls ?? []).map((call) => ({ name: call.name ?? "", args: call.args ?? {} }));
+        if (calls.length === 0) throw new Error("The model returned no function calls");
+        return calls;
       });
-      const calls = (response.functionCalls ?? []).map((call) => ({ name: call.name ?? "", args: call.args ?? {} }));
-      if (calls.length === 0) throw new Error("The model returned no function calls");
-      return calls;
     },
   };
 }
