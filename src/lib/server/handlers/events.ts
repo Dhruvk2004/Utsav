@@ -27,6 +27,13 @@ export async function listEvents(request: Request, deps: ServerDeps): Promise<Re
 
 type Generated = { ok: true; plan: EventPlan } | { ok: false; response: Response };
 
+/** What a failed model call may log: its type and HTTP status, never its message, which can quote AI output. */
+function modelErrorFields(error: unknown): { error: string; status?: number } {
+  if (!(error instanceof Error)) return { error: "unknown" };
+  const status = (error as { status?: unknown }).status;
+  return { error: error.name, ...(typeof status === "number" ? { status } : {}) };
+}
+
 /**
  * The plan for an AI request: from the per-user cache (keyed without the title, spec 6.2), else
  * from the model within the per-minute limit and the daily quota, else the starter template.
@@ -55,7 +62,7 @@ async function aiPlan(
     today: clock.today,
     context,
     signal: request.signal,
-    onError: (error, attempt) => deps.log("plan_attempt_failed", { attempt, error: error instanceof Error ? error.name : "unknown" }),
+    onError: (error, attempt) => deps.log("plan_attempt_failed", { attempt, ...modelErrorFields(error) }),
   });
   deps.log("plan_generated", { uid: session.uid, source: plan.source, latencyMs: Date.now() - started, model: deps.model?.name ?? null });
   // Only real AI plans are cached, so a temporary outage doesn't stick.

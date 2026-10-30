@@ -149,7 +149,7 @@ describe("ideasDraft (T4)", () => {
     expect(draft.items.map((i) => i.op.type === "add_idea" && i.op.idea.title)).toEqual(["Peppa cake", "Visit"]);
     expect(draft.items[0].op).toMatchObject({ idea: { basis: ["honoree.interests:cartoons"] } });
     expect(draft).toMatchObject({ origin: "ai", filtered: true });
-    expect(model.requests[0]).toMatchObject({ temperature: 0.8, maxOutputTokens: 2048 });
+    expect(model.requests[0]).toMatchObject({ temperature: 0.8, maxOutputTokens: 6144 });
   });
 
   it("refuses a reply whose ideas are all repeats", async () => {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createGeminiModel, createModelProbe, DEFAULT_MODEL, draftJsonSchema, type PlanModel } from "@/lib/ai/model";
+import { createGeminiModel, createModelProbe, DEFAULT_MODEL, draftJsonSchema, ModelTruncatedError, type PlanModel } from "@/lib/ai/model";
 import { generatePlan, parseDraft } from "@/lib/ai/planService";
 import { MAX_ATTEMPTS, ReplyParseError as DraftParseError } from "@/lib/ai/reply";
 import { buildPlanPrompt, EMPTY_CONTEXT, SYSTEM_INSTRUCTION } from "@/lib/ai/prompts/plan";
@@ -9,7 +9,9 @@ const generateContent = vi.fn();
 const countTokens = vi.fn();
 const constructorArgs: unknown[] = [];
 vi.mock("@google/genai", () => ({
+  FinishReason: { MAX_TOKENS: "MAX_TOKENS" },
   FunctionCallingConfigMode: { ANY: "ANY" },
+  ThinkingLevel: { LOW: "LOW" },
   GoogleGenAI: class {
     models = { generateContent, countTokens };
     constructor(options: unknown) {
@@ -130,6 +132,15 @@ describe("createGeminiModel", () => {
 
   it("returns null when nothing is configured", () => {
     expect(createGeminiModel({})).toBeNull();
+  });
+
+  it("treats a reply cut off at the output limit as a failure, and thinks lightly (real Gemini regression)", async () => {
+    generateContent.mockResolvedValue({ text: '{"cut":', candidates: [{ finishReason: "MAX_TOKENS" }] });
+    const model = createGeminiModel({ GEMINI_API_KEY: "k" });
+    await expect(model?.generateJson({ systemInstruction: "s", prompt: "p" })).rejects.toThrow(ModelTruncatedError);
+    expect(generateContent).toHaveBeenCalledWith(
+      expect.objectContaining({ config: expect.objectContaining({ thinkingConfig: { thinkingLevel: "LOW" }, maxOutputTokens: 12_288 }) }),
+    );
   });
 
   it("uses an API key locally with the default model", async () => {

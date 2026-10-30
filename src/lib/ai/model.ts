@@ -1,4 +1,4 @@
-import { FunctionCallingConfigMode, GoogleGenAI } from "@google/genai";
+import { FinishReason, FunctionCallingConfigMode, GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { z } from "zod";
 import { aiPlanDraftSchema } from "@/lib/domain/schemas";
 
@@ -62,10 +62,13 @@ export type ModelEnv = Partial<
   Record<string, string | undefined>;
 
 export const DEFAULT_MODEL = "gemini-flash-latest";
-export const REQUEST_TIMEOUT_MS = 25_000;
-const PLAN_MAX_TOKENS = 4_096;
+export const REQUEST_TIMEOUT_MS = 45_000;
+/** Thinking tokens count against these limits, so each leaves room for them on top of the reply. */
+const PLAN_MAX_TOKENS = 12_288;
 /** Every touchpoint other than the plan (spec 6.11). */
-export const MAX_OUTPUT_TOKENS = 2_048;
+export const MAX_OUTPUT_TOKENS = 6_144;
+/** Replies are checked in code, so a light think is enough; the Flash default (medium or high) is slower. */
+const THINKING_CONFIG = { thinkingLevel: ThinkingLevel.LOW };
 
 interface GeminiClient {
   client: GoogleGenAI;
@@ -100,6 +103,14 @@ function geminiClient(env: ModelEnv): GeminiClient | null {
   return null;
 }
 
+/** The reply hit the output limit, so its JSON is cut off. */
+export class ModelTruncatedError extends Error {
+  override name = "ModelTruncatedError";
+  constructor() {
+    super("The model reply reached the output limit");
+  }
+}
+
 /** Creates the plan model, or null when nothing is configured (plans then use the starter template). */
 export function createGeminiModel(env: ModelEnv): PlanModel | null {
   const gemini = geminiClient(env);
@@ -118,9 +129,11 @@ export function createGeminiModel(env: ModelEnv): PlanModel | null {
           responseJsonSchema: responseSchema ?? planSchema,
           temperature: temperature ?? 0.6,
           maxOutputTokens: maxOutputTokens ?? PLAN_MAX_TOKENS,
+          thinkingConfig: THINKING_CONFIG,
           abortSignal: signal,
         },
       });
+      if (response.candidates?.[0]?.finishReason === FinishReason.MAX_TOKENS) throw new ModelTruncatedError();
       const text = response.text;
       if (!text) throw new Error("The model returned an empty response");
       return text;
@@ -135,6 +148,7 @@ export function createGeminiModel(env: ModelEnv): PlanModel | null {
           toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY } },
           temperature,
           maxOutputTokens: MAX_OUTPUT_TOKENS,
+          thinkingConfig: THINKING_CONFIG,
           abortSignal: signal,
         },
       });
