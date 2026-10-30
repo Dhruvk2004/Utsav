@@ -795,3 +795,20 @@ AI text came from the scripted model, so I don't judge its content here (dhol pl
 | MQR-06 | `e2e/hydration.ts` (`whenHydrated`), `e2e/signed-in/journey.spec.ts` |
 | Docs and hygiene | `README.md` (Security row, SEC-14 accepted risk), `.gitignore` (emulator logs), `docs/build-log.md`, this report |
 | Tests | `tests/unit/plan/ServerPlanStore.test.ts`, `tests/components/workspace/quickDecisions.test.tsx` (new), `tests/unit/guards.test.ts` (proxy tests now `await`, plus the QA-05 cases), `tests/unit/plan/replaceEarlier.test.ts`, `tests/unit/plan/SandboxPlanStore.test.ts`, `tests/unit/server/demoRoutes.test.ts`, `tests/unit/data/httpAiClient.test.ts`, `e2e/signed-in/journey.spec.ts` (QA-19 and QA-20 tests, QA-05 marker removed) |
+
+## Live testing on real Gemini (2026-10-30)
+
+Run on the deployed site with a real Google account and the real Gemini API, which the scripted test double could not stand in for. Each fix has a regression test.
+
+| Finding | Cause | Fix |
+|---|---|---|
+| Every plan fell back to the starter template | Gemini answered HTTP 400 to schemas with `minimum`, `maximum`, `minItems` and `maxItems` | Limits are sent as written hints; Zod still enforces them |
+| Long waits when the model was busy | `gemini-flash-latest` can return 503 or hang | Short deadline, then `gemini-flash-lite-latest`; the main model is skipped for a minute after a failure |
+| Saved AI plans would not open | A long task title made an id over the 80-character limit | Ids use the start of the title; an AI plan that would not read back is never saved |
+| New event showed old answers and could create a duplicate | Next keeps left pages alive with React Activity, so the create re-ran on return | The wizard resets when hidden |
+| Next could take seconds, so a second click skipped a step | `router.push` went to the server for each step | Steps use `history.pushState` |
+| Every server route returned 500 on Vercel | Vercel disables `require(esm)`, and `jwks-rsa` requires ESM-only `jose` 6 | `jose` 5 for `jwks-rsa`, tested under the same flag |
+
+Checked live and working: Google sign-in, onboarding, birthday, wedding and community plans, budget, timeline, vendors, ideas, AI mode (accept, edit, decline, undo), What-if, Hindi enquiry drafts, share link, calendar export, phone layout.
+
+Known limits: the free Gemini tier can slow bursts of requests, and an AI summary is not rewritten when a later edit changes a number it mentions.
