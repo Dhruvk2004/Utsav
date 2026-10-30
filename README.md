@@ -1,5 +1,7 @@
 # Utsav: AI celebration planner
 
+**Live demo:** https://utsav-planner-app.vercel.app (start at `/demo`, no sign-in needed)
+
 Utsav is a planning workspace for Indian celebrations: weddings, birthdays and community events. You create an event once and Utsav keeps a living plan for it: a budget that always adds up, a timeline counted back from the event day, a vendor checklist and ideas that fit the people being celebrated. Gemini is a co-planner that **proposes** changes, code **checks** them, and you **decide**.
 
 Built for Google Cloud PromptWars, Challenge 5: Celebration & Event Planner.
