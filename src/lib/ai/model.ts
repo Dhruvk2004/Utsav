@@ -46,9 +46,48 @@ export interface PlanModel {
  * side, so fields with defaults stay optional for the model and trimming transforms are allowed.
  */
 export function jsonSchemaOf(schema: z.ZodType, io: "input" | "output" = "output"): Record<string, unknown> {
-  const json = z.toJSONSchema(schema, { io, target: "draft-7" }) as Record<string, unknown>;
-  delete json.$schema;
-  return json;
+  return forGemini(z.toJSONSchema(schema, { io, target: "draft-7" })) as Record<string, unknown>;
+}
+
+/** The JSON Schema keywords Gemini accepts; anything else can fail the whole request with a 400. */
+const GEMINI_SCHEMA_KEYWORDS = new Set([
+  "type",
+  "format",
+  "title",
+  "description",
+  "enum",
+  "items",
+  "minItems",
+  "maxItems",
+  "minimum",
+  "maximum",
+  "anyOf",
+  "required",
+  "properties",
+  "additionalProperties",
+]);
+
+/** Keeps the supported keywords. Dropped limits still bind: every reply is validated with Zod. */
+function forGemini(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(forGemini);
+  if (typeof node !== "object" || node === null) return node;
+  const source = node as Record<string, unknown>;
+  const kept: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (!GEMINI_SCHEMA_KEYWORDS.has(key)) continue;
+    // Under `properties` the keys are field names, which may look like keywords.
+    kept[key] = key === "properties" ? mapValues(value as Record<string, unknown>, forGemini) : forGemini(value);
+  }
+  if (source.const !== undefined) kept.enum = [source.const];
+  // Say the length limit in words, so the model still aims inside what Zod will accept.
+  if (typeof source.maxLength === "number") {
+    kept.description = [kept.description, `At most ${source.maxLength} characters.`].filter(Boolean).join(" ");
+  }
+  return kept;
+}
+
+function mapValues(record: Record<string, unknown>, map: (value: unknown) => unknown): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(record).map(([key, value]) => [key, map(value)]));
 }
 
 /** JSON Schema sent to Gemini, generated from the same Zod schema used to validate the reply. */

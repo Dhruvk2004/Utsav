@@ -27,11 +27,15 @@ export async function listEvents(request: Request, deps: ServerDeps): Promise<Re
 
 type Generated = { ok: true; plan: EventPlan } | { ok: false; response: Response };
 
-/** What a failed model call may log: its type and HTTP status, never its message, which can quote AI output. */
-function modelErrorFields(error: unknown): { error: string; status?: number } {
+/**
+ * What a failed model call may log: its type and HTTP status, plus the API's own text for a rejected
+ * request (4xx), which describes the request. Other messages are left out, as they can quote AI output.
+ */
+function modelErrorFields(error: unknown): { error: string; status?: number; detail?: string } {
   if (!(error instanceof Error)) return { error: "unknown" };
   const status = (error as { status?: unknown }).status;
-  return { error: error.name, ...(typeof status === "number" ? { status } : {}) };
+  if (typeof status !== "number") return { error: error.name };
+  return { error: error.name, status, ...(status >= 400 && status < 500 ? { detail: error.message.slice(0, 300) } : {}) };
 }
 
 /**

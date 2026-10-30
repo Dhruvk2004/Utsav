@@ -5,11 +5,13 @@ import {
   DEFAULT_MODEL,
   draftJsonSchema,
   FALLBACK_MODEL,
+  jsonSchemaOf,
   ModelTruncatedError,
   PRIMARY_COOLDOWN_MS,
   PRIMARY_TIMEOUT_MS,
   type PlanModel,
 } from "@/lib/ai/model";
+import { z } from "zod";
 import { generatePlan, parseDraft } from "@/lib/ai/planService";
 import { MAX_ATTEMPTS, ReplyParseError as DraftParseError } from "@/lib/ai/reply";
 import { buildPlanPrompt, EMPTY_CONTEXT, SYSTEM_INSTRUCTION } from "@/lib/ai/prompts/plan";
@@ -131,6 +133,28 @@ describe("generatePlan", () => {
     const plan = await generatePlan(input, { model, today: TODAY, signal: controller.signal });
     expect(model.calls).toBe(0);
     expect(plan.source).toBe("template");
+  });
+});
+
+describe("jsonSchemaOf", () => {
+  it("sends Gemini only the keywords it accepts, keeping length limits as hints (real Gemini 400 regression)", () => {
+    const schema = z.object({
+      default: z.string().min(1).max(40),
+      note: z.string().max(200).default(""),
+      kind: z.literal("a"),
+      count: z.number().int().min(1).max(5),
+    });
+    const json = jsonSchemaOf(schema) as { properties: Record<string, Record<string, unknown>> };
+    expect(json).not.toHaveProperty("$schema");
+    expect(JSON.stringify(json)).not.toMatch(/"(minLength|maxLength|const|\$schema)"/);
+    expect(json.properties.default).toEqual({ type: "string", description: "At most 40 characters." });
+    expect(json.properties.note).toEqual({ type: "string", description: "At most 200 characters." });
+    expect(json.properties.kind).toMatchObject({ enum: ["a"] });
+    expect(json.properties.count).toMatchObject({ type: "integer", minimum: 1, maximum: 5 });
+  });
+
+  it("leaves the plan schema free of unsupported keywords", () => {
+    expect(JSON.stringify(draftJsonSchema())).not.toMatch(/"(minLength|maxLength|pattern|const|\$schema)"/);
   });
 });
 
