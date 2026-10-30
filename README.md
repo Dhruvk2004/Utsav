@@ -165,7 +165,7 @@ The Firebase web config (`NEXT_PUBLIC_FIREBASE_*`) is inlined into the browser b
 | `FIREBASE_PROJECT_ID` | the Firebase project ID |
 | `FIREBASE_SERVICE_ACCOUNT` | the Admin SDK service-account JSON key (or its base64), from Project settings > Service accounts. **Secret.** |
 | `GEMINI_API_KEY` | a Gemini API key from Google AI Studio. **Secret.** |
-| `GEMINI_MODEL` | for example `gemini-2.5-flash` |
+| `GEMINI_MODEL` | optional; leave unset to use the `gemini-flash-latest` alias, which follows Google's model retirements |
 | `APP_ORIGIN` | `https://<project>.vercel.app` |
 
 4. Set the function region to Mumbai (`bom1`) next to Firestore, and redeploy.
@@ -179,7 +179,7 @@ The Firebase web config (`NEXT_PUBLIC_FIREBASE_*`) is inlined into the browser b
 ```bash
 gcloud run deploy utsav --source . --region asia-south1 --allow-unauthenticated \
   --min-instances=1 --max-instances=3 --cpu-boost \
-  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project),GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=gemini-2.5-flash,APP_ORIGIN=https://<service-host>
+  --set-env-vars GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project),GOOGLE_CLOUD_LOCATION=global,GEMINI_MODEL=<vertex-model-id>,APP_ORIGIN=https://<service-host>
 ```
 
 The service account needs **Vertex AI User**, **Cloud Datastore User** and **Firebase Authentication Admin**. `docker build --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=... .` overrides `.env.production` when building elsewhere. The test suites build with these values empty, so `npm run test:e2e` keeps testing the "not configured" build whatever the file holds.
