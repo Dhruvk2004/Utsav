@@ -154,7 +154,7 @@ describe("jsonSchemaOf", () => {
     expect(json.properties.kind).toMatchObject({ enum: ["a"] });
     expect(json.properties.count).toEqual({ type: "integer", description: "Minimum 1. Maximum 5." });
     expect(json.properties.total).toEqual({ type: "integer", description: "Minimum 0." });
-    expect(json.properties.tags).toMatchObject({ type: "array", description: "At least 1 item. At most 3 items." });
+    expect(json.properties.tags).toMatchObject({ type: "array", description: "At most 3 items." });
   });
 
   it("leaves the plan schema free of the keywords Gemini rejected", () => {

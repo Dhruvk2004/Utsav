@@ -88,7 +88,7 @@ function limitHints({ maxLength, minimum, maximum, minItems, maxItems }: Record<
   if (typeof minimum === "number") hints.push(`Minimum ${minimum}.`);
   // Zod bounds every integer by Number.MAX_SAFE_INTEGER, which is no real limit.
   if (typeof maximum === "number" && maximum < Number.MAX_SAFE_INTEGER) hints.push(`Maximum ${maximum}.`);
-  if (typeof minItems === "number" && minItems > 0) hints.push(`At least ${minItems} ${minItems === 1 ? "item" : "items"}.`);
+  if (typeof minItems === "number" && minItems > 1) hints.push(`At least ${minItems} items.`);
   if (typeof maxItems === "number") hints.push(`At most ${maxItems} items.`);
   return hints;
 }

@@ -99,7 +99,7 @@ export function buildPlanPrompt(input: EventInput, today: string, context: PlanC
     JSON.stringify(details, null, 2),
     "```",
     functionRule,
-    "Scale the plan to the event. A small gathering gets 12 to 18 tasks and 5 to 7 vendor categories; a large event, or one with several functions, gets 20 to 30 tasks and 8 to 12 vendor categories. Spread tasks across the whole lead time, give each vendor category 2 or 3 questions to ask (and the budget category that pays for it), and add 5 to 8 personalised ideas that reflect the details. Keep each title and question short.",
+    "Scale the plan to the event. A small gathering gets 12 to 18 tasks and 5 to 7 vendor categories; a large event, or one with several functions, gets 20 to 30 tasks and 8 to 12 vendor categories. Never return fewer than 12 tasks and 5 vendor categories. Spread tasks across the whole lead time, give each vendor category 2 or 3 questions to ask (and the budget category that pays for it), and add 5 to 8 personalised ideas that reflect the details. Keep each title and question short.",
     `Write all text values in ${LANGUAGE_NAMES[input.language]}. Keep JSON keys in English.`,
   ].join("\n");
 }
